@@ -56,10 +56,10 @@ const App = () => {
     );
 
     ctx.fillStyle = "#ffffff";
-    ctx.font = "32px serif";
+    ctx.font = "35px serif";
     ctx.textAlign = "center";
 
-    wrapText(ctx, text, width / 2, 480, 520, 60);
+    wrapText(ctx, text, width / 2, 480, 700, 70);
 
     ctx.font = "40px sans-serif";
     ctx.fillStyle = "#E8EE2F";
