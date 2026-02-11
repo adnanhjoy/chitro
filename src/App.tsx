@@ -3,57 +3,69 @@ import { useEffect, useRef, useState } from "react";
 const App = () => {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const [text, setText] = useState<string>(
-    "Your premium message goes here..."
+    ""
   );
 
-  const bgImageUrl =
-    "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee";
+  const bgImageUrl = "https://res.cloudinary.com/djpekunve/image/upload/v1770800929/Chitro/chitro_a40kib.jpg";
+  const chitroLogoUrl = "https://res.cloudinary.com/djpekunve/image/upload/v1770801565/Chitro/chitro-fb_f1pjur.png"
 
   useEffect(() => {
     generateCard();
   }, [text]);
 
   const generateCard = (): void => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
+  const canvas = canvasRef.current;
+  if (!canvas) return;
 
-    const ctx = canvas.getContext("2d");
-    if (!ctx) return;
+  const ctx = canvas.getContext("2d");
+  if (!ctx) return;
 
-    const width = 800;
-    const height = 1000;
+  const width = 800;
+  const height = 1000;
 
-    canvas.width = width;
-    canvas.height = height;
+  canvas.width = width;
+  canvas.height = height;
 
-    const image = new Image();
-    image.crossOrigin = "anonymous";
-    image.src = bgImageUrl;
+  const bgImage = new Image();
+  const logoImage = new Image();
 
-    image.onload = () => {
-      // Draw background image
-      ctx.drawImage(image, 0, 0, width, height);
+  bgImage.crossOrigin = "anonymous";
+  logoImage.crossOrigin = "anonymous";
 
-      // Dark transparent overlay (premium effect)
-      ctx.fillStyle = "rgba(0, 0, 0, 0.55)";
-      ctx.fillRect(0, 0, width, height);
+  bgImage.src = bgImageUrl;
+  logoImage.src = chitroLogoUrl;
 
-      // Glass style card background
-      ctx.fillStyle = "rgba(255,255,255,0.08)";
-      ctx.fillRect(100, 300, 600, 350);
+  Promise.all([
+    new Promise((res) => (bgImage.onload = res)),
+    new Promise((res) => (logoImage.onload = res)),
+  ]).then(() => {
+    ctx.drawImage(bgImage, 0, 0, width, height);
 
-      // Text
-      ctx.fillStyle = "#ffffff";
-      ctx.font = "bold 48px serif";
-      ctx.textAlign = "center";
+    ctx.fillStyle = "rgba(0, 0, 0, 0.55)";
+    ctx.fillRect(0, 0, width, height);
 
-      wrapText(ctx, text, width / 2, 480, 520, 60);
+    const logoWidth = 100;
+    const logoHeight = 100;
 
-      // Sub branding
-      ctx.font = "20px sans-serif";
-      ctx.fillText("Chitro Studio", width / 2, height - 60);
-    };
-  };
+    ctx.drawImage(
+      logoImage,
+      width - logoWidth - 40,
+      40,                  
+      logoWidth,
+      logoHeight
+    );
+
+    ctx.fillStyle = "#ffffff";
+    ctx.font = "32px serif";
+    ctx.textAlign = "center";
+
+    wrapText(ctx, text, width / 2, 480, 520, 60);
+
+    ctx.font = "40px sans-serif";
+    ctx.fillStyle = "#E8EE2F";
+    ctx.fillText("—চিত্র—", width / 2, height - 60);
+  });
+};
 
   const wrapText = (
     context: CanvasRenderingContext2D,
@@ -94,19 +106,15 @@ const App = () => {
     if (!canvas) return;
 
     const link = document.createElement("a");
-    link.download = "premium-card.png";
+    link.download = "chitro.png";
     link.href = canvas.toDataURL("image/png");
     link.click();
   };
 
   return (
     <div className="min-h-screen bg-black flex flex-col items-center justify-center px-4 text-white">
-      <h1 className="text-3xl font-bold mb-6">
-        Premium Card Generator
-      </h1>
-
       <textarea
-        className="w-full max-w-xl h-28 p-4 rounded-xl text-black resize-none focus:outline-none focus:ring-2 focus:ring-indigo-500"
+        className="w-full max-w-xl h-28 p-4 rounded-xl border border-indigo-500 text-white resize-none focus:outline-none focus:ring-2 focus:ring-indigo-500"
         placeholder="Write your message..."
         value={text}
         onChange={(e) => setText(e.target.value)}
@@ -114,7 +122,7 @@ const App = () => {
 
       <button
         onClick={downloadImage}
-        className="mt-4 px-6 py-2 bg-indigo-600 hover:bg-indigo-700 transition rounded-xl font-semibold"
+        className="mt-4 px-6 py-2 bg-indigo-600 hover:bg-indigo-700 transition rounded-md font-medium"
       >
         Download Card
       </button>
