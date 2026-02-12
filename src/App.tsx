@@ -67,17 +67,21 @@ const App = () => {
   });
 };
 
-  const wrapText = (
-    context: CanvasRenderingContext2D,
-    text: string,
-    x: number,
-    y: number,
-    maxWidth: number,
-    lineHeight: number
-  ): void => {
-    const words = text.split(" ");
+ const wrapText = (
+  context: CanvasRenderingContext2D,
+  text: string,
+  x: number,
+  y: number,
+  maxWidth: number,
+  lineHeight: number
+): void => {
+
+  const paragraphs = text.split("\n");
+  const lines: string[] = [];
+
+  paragraphs.forEach((paragraph) => {
+    const words = paragraph.split(" ");
     let line = "";
-    const lines: string[] = [];
 
     for (let i = 0; i < words.length; i++) {
       const testLine = line + words[i] + " ";
@@ -85,21 +89,22 @@ const App = () => {
       const testWidth = metrics.width;
 
       if (testWidth > maxWidth && i > 0) {
-        lines.push(line);
+        lines.push(line.trim());
         line = words[i] + " ";
       } else {
         line = testLine;
       }
     }
 
-    lines.push(line);
+    lines.push(line.trim());
+  });
 
-    const startY = y - (lines.length * lineHeight) / 2;
+  const startY = y - (lines.length * lineHeight) / 2;
 
-    lines.forEach((l, i) => {
-      context.fillText(l, x, startY + i * lineHeight);
-    });
-  };
+  lines.forEach((l, i) => {
+    context.fillText(l, x, startY + i * lineHeight);
+  });
+};
 
   const downloadImage = (): void => {
     const canvas = canvasRef.current;
